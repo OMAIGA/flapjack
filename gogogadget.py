@@ -1,13 +1,14 @@
 """ The following code is for the creation of a wine tasting journal, or what I like to call a Wino-mentary"""
 
-#Ask what we need to do: New Entry? Search? View All
+#Greets then asks what user wants to do: New Entry, Search, or View All
 import csv
 
-write_stuff=open("wino.csv", "a")
-read_stuff= open("wino.csv", "r")
+write_stuff=open('wino.csv', 'a')
+read_stuff= csv.DictReader((open("wino.csv", "rb")), delimiter= ',', quotechar= '"')
 
-print "Hi Jeanette!\n" "Drinking wine AGAIN I see.\n" 
+print "\nHi Jeanette!\n" "Drinking wine AGAIN I see...\n" 
 tell_me = raw_input("What do you want to do?")
+print ""
 
 
 more = ["New", "new", "N", "n", "add", "New entry"]
@@ -17,8 +18,9 @@ lush = ["Yes", "yes", "y"]
 
 
 def add_entry(date, winery, wine_name, wine_type, year, buy, comment):
-	data = {"Date of Visit": "", "Winery": "", "Name of Wine": "", "Wine Type": [] , "Year": "" , "Purchased": "", "Notes": ""}
-	save_list = [date, winery, wine_name, wine_type, year, buy, comment]
+	data = {"Date of Visit": "", "Winery": "", "Name of Wine": "", "Wine Type": "" , "Year": "" , "Purchased": "", "Notes": ""}
+# NEED TO FIX LIST- Seperates each letter
+	save_list = []
 	# input variable from raw input
 	data["Date of Visit"] += date #variables
 	data["Winery"] += winery
@@ -27,16 +29,18 @@ def add_entry(date, winery, wine_name, wine_type, year, buy, comment):
 	data["Year"] += year
 	data["Purchased"] += buy
 	data["Notes"] += comment
-	# return data
-	csv_writer = csv.writer(write_stuff)
-	csv_writer.writerow(data.keys())
-	csv_writer.writerow(data.values())
+	
+	save_list.append(data);
 
+	fieldnames = ["Date of Visit", "Winery", "Name of Wine", "Wine Type", "Year", "Purchased", "Notes"]
 
-	# csv_writer.writerow(save_list)
-	# write_stuff.close()
-
+	csvwriter = csv.DictWriter(write_stuff, fieldnames=fieldnames)
+	
+	csvwriter.writerow(dict((fn,fn) for fn in fieldnames))
+	for row in save_list:
+		csvwriter.writerow(row)
 #above code should add data value to dictionary and save to csv
+
 #save data in file- Dictionaries within a master List to search?
 
 if tell_me in more:
@@ -49,14 +53,11 @@ if tell_me in more:
 	buy = raw_input("Purchased:")
 	comment = raw_input("Notes:")
 	add_entry(date, winery, wine_name, wine_type, year, buy, comment)
-
-# 	elif tell_me in old:
-# # Call Search function
-
+# elif tell_me in old:
+# Call Search function
 elif tell_me in see_all:
 	print "You should be ashamed..."
-	reader = csv.reader(read_stuff)
-	for row in reader:
+	for row in read_stuff:
 		print row
 # # Above calls function to display all existing entries
 
